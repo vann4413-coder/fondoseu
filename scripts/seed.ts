@@ -123,7 +123,7 @@ const FUNDS: SeedFund[] = [
   {
     source: "MANUAL",
     sourceId: "eic-accelerator-2025",
-    sourceUrl: "https://eic.ec.europa.eu/eic-funding-opportunities/eic-accelerator_es",
+    sourceUrl: "https://eic.ec.europa.eu/eic-funding-opportunities/eic-accelerator_en",
     slug: "eic-accelerator-financiacion-startups-disruptivas-eu-eic-accelerator",
     title: "EIC Accelerator — Hasta 17,5M€ para startups con innovación disruptiva",
     organism: "European Innovation Council (Comisión Europea)",
@@ -144,7 +144,7 @@ const FUNDS: SeedFund[] = [
     status: "abierta",
     openDate: "2026-01-15",
     closeDate: "2026-10-08",
-    applicationUrl: "https://eic.ec.europa.eu/eic-funding-opportunities/eic-accelerator_es",
+    applicationUrl: "https://eic.ec.europa.eu/eic-funding-opportunities/eic-accelerator_en",
     requiredDocs: ["PYME/startup UE", "Innovación disruptiva", "Pitch deck + modelo financiero"],
     rawData: { programa: "EIC Accelerator", convocatoria: "2025" },
     lastSyncedAt: new Date(),

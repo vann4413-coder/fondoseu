@@ -5,7 +5,7 @@ import { Search, Calendar, Globe, Info, Sparkles, Mail } from "lucide-react";
 const navLinks = [
   { href: "/buscar", label: "Buscar ayudas", icon: Search },
   { href: "/wizard", label: "Test rápido", icon: Sparkles },
-  { href: "/calendario", label: "Plazos", icon: Calendar },
+  { href: "/calendario", label: "Calendario", icon: Calendar },
   { href: "/fondos-europeos", label: "Fondos europeos", icon: Globe },
   { href: "/sobre", label: "Sobre", icon: Info },
   { href: "/contacto", label: "Contacto", icon: Mail },
