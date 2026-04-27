@@ -1,0 +1,24 @@
+name: Sync BDNS daily
+
+on:
+  schedule:
+    - cron: "0 6 * * *"  # cada día a las 6:00 AM UTC
+  workflow_dispatch:       # permite lanzarlo manualmente desde GitHub
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - run: npm ci
+
+      - name: Run BDNS sync
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: npm run sync:bdns
