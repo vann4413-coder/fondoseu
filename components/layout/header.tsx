@@ -7,7 +7,7 @@ const navLinks = [
   { href: "/wizard", label: "Test rápido", icon: Sparkles },
   { href: "/calendario", label: "Calendario", icon: Calendar },
   { href: "/fondos-europeos", label: "Fondos europeos", icon: Globe },
-  { href: "/sobre", label: "Sobre", icon: Info },
+  { href: "/sobre", label: "Sobre nosotros", icon: Info },
   { href: "/contacto", label: "Contacto", icon: Mail },
 ];
 
