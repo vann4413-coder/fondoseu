@@ -41,7 +41,7 @@ import {
   Sparkles,
 } from "lucide-react";
 
-export const revalidate = 3600; // ISR: revalidar cada hora
+export const dynamic = "force-dynamic";
 
 async function getFund(slug: string) {
   const result = await db
