@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
+import { CtaServices } from "@/components/layout/cta-services";
 
 export const metadata: Metadata = {
   title: "FondosEU - Fondos europeos y ayudas para emprender en España",
@@ -24,6 +25,7 @@ export default function RootLayout({
       <body className="antialiased">
         <Header />
         <main className="min-h-[calc(100vh-200px)]">{children}</main>
+        <CtaServices />
         <Footer />
       </body>
     </html>
