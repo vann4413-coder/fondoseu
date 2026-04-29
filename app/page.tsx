@@ -1,3 +1,5 @@
+import { CompactMapSection } from "@/components/map/compact-map-section";
+
 export default function Home() {
   return (
     <div className="space-y-12">
@@ -93,6 +95,15 @@ export default function Home() {
             Ver todos los programas europeos →
           </a>
         </div>
+      </section>
+
+      {/* Map section */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 className="text-3xl font-bold mb-2 text-center">Ayudas por comunidad autónoma</h2>
+        <p className="text-center text-gray-600 mb-6">
+          Haz clic en tu comunidad para ver todas las convocatorias activas.
+        </p>
+        <CompactMapSection />
       </section>
 
       {/* How it works */}

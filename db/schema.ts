@@ -8,7 +8,6 @@ import {
   boolean,
   numeric,
   date,
-  integer,
   index,
 } from "drizzle-orm/pg-core";
 
@@ -69,6 +68,14 @@ export const funds = pgTable(
     applicationUrl: text("application_url"),
     guideUrl: text("guide_url"),
     requiredDocs: jsonb("required_docs").$type<string[]>().notNull().default([]),
+
+    ccaaCode: varchar("ccaa_code", {
+      enum: [
+        "ES-AN","ES-AR","ES-AS","ES-IB","ES-CN","ES-CB","ES-CM","ES-CL",
+        "ES-CT","ES-CE","ES-EX","ES-GA","ES-RI","ES-MD","ES-MC","ES-NC",
+        "ES-PV","ES-VC","ES-ML","MULTIPLE",
+      ],
+    }),
 
     rawData: jsonb("raw_data"),
 
