@@ -8,6 +8,7 @@ import {
   boolean,
   numeric,
   date,
+  doublePrecision,
   index,
 } from "drizzle-orm/pg-core";
 
@@ -94,3 +95,67 @@ export const funds = pgTable(
 
 export type Fund = typeof funds.$inferSelect;
 export type NewFund = typeof funds.$inferInsert;
+
+// ── Puntos de Atención al Emprendedor ─────────────────────────────────────────
+
+export const assistancePoints = pgTable(
+  "assistance_points",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    source: varchar("source", {
+      enum: ["PAE", "ACELERA_PYME", "EEN", "CAMARAS"],
+    }).notNull().default("PAE"),
+    sourceExternalId: text("source_external_id").notNull(),
+
+    name: text("name").notNull(),
+    type: text("type"),
+    address: text("address"),
+    postalCode: varchar("postal_code", { length: 10 }),
+    city: text("city"),
+    province: text("province"),
+    ccaaCode: varchar("ccaa_code", { length: 10 }),
+
+    lat: doublePrecision("lat"),
+    lng: doublePrecision("lng"),
+
+    phone: text("phone"),
+    email: text("email"),
+    website: text("website"),
+    openingHours: text("opening_hours"),
+    services: jsonb("services").$type<string[]>().notNull().default([]),
+
+    lastVerifiedAt: timestamp("last_verified_at"),
+    needsReview: boolean("needs_review").notNull().default(false),
+    active: boolean("active").notNull().default(true),
+
+    rawData: jsonb("raw_data"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    sourceExtIdIdx: index("ap_source_ext_id_idx").on(table.source, table.sourceExternalId),
+    ccaaIdx: index("ap_ccaa_idx").on(table.ccaaCode),
+    postalCodeIdx: index("ap_postal_code_idx").on(table.postalCode),
+    latLngIdx: index("ap_lat_lng_idx").on(table.lat, table.lng),
+  })
+);
+
+export type AssistancePoint = typeof assistancePoints.$inferSelect;
+export type NewAssistancePoint = typeof assistancePoints.$inferInsert;
+
+// ── Caché de geocodificación ───────────────────────────────────────────────────
+
+export const geocodingCache = pgTable(
+  "geocoding_cache",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    query: text("query").notNull().unique(),
+    lat: doublePrecision("lat"),
+    lng: doublePrecision("lng"),
+    resolved: boolean("resolved").notNull().default(false),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    queryIdx: index("geocoding_cache_query_idx").on(table.query),
+  })
+);
