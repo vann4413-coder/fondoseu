@@ -10,9 +10,7 @@ import { useRouter } from "next/navigation";
 import { MapTooltip } from "./map-tooltip";
 import type { CcaaMapItem } from "@/app/api/map-data/route";
 
-// Spain CCAA TopoJSON (Canarias inset included)
-const GEO_URL =
-  "https://raw.githubusercontent.com/deldersveld/topojson/master/countries/spain/spain-communities.json";
+const GEO_URL = "/data/spain-ccaa.geojson";
 
 const COLOR_MAP: Record<CcaaMapItem["color"], string> = {
   urgente: "#dc2626",
@@ -28,17 +26,17 @@ const HOVER_MAP: Record<CcaaMapItem["color"], string> = {
   "sin-datos": "#d1d5db",
 };
 
-// Map TopoJSON property names to our ISO codes
+// Map GeoJSON name values to ISO codes
 const NAME_TO_CODE: Record<string, string> = {
-  "Andalucía": "ES-AN",
-  "Aragón": "ES-AR",
+  "Andalucia": "ES-AN",
+  "Aragon": "ES-AR",
   "Asturias": "ES-AS",
-  "Islas Baleares": "ES-IB",
+  "Baleares": "ES-IB",
   "Canarias": "ES-CN",
   "Cantabria": "ES-CB",
   "Castilla-La Mancha": "ES-CM",
-  "Castilla y León": "ES-CL",
-  "Cataluña": "ES-CT",
+  "Castilla-Leon": "ES-CL",
+  "Cataluna": "ES-CT",
   "Ceuta": "ES-CE",
   "Extremadura": "ES-EX",
   "Galicia": "ES-GA",
@@ -46,18 +44,18 @@ const NAME_TO_CODE: Record<string, string> = {
   "Madrid": "ES-MD",
   "Murcia": "ES-MC",
   "Navarra": "ES-NC",
-  "País Vasco": "ES-PV",
-  "Comunidad Valenciana": "ES-VC",
+  "Pais Vasco": "ES-PV",
+  "Valencia": "ES-VC",
   "Melilla": "ES-ML",
-  // alternative spellings in the TopoJSON
-  "Comunitat Valenciana": "ES-VC",
-  "Illes Balears": "ES-IB",
-  "Principado de Asturias": "ES-AS",
-  "Región de Murcia": "ES-MC",
-  "Comunidad de Madrid": "ES-MD",
-  "Comunidad Foral de Navarra": "ES-NC",
-  "País Vasco / Euskadi": "ES-PV",
 };
+
+function normalizeName(raw: string): string {
+  return raw
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/ñ/g, "n")
+    .replace(/Ñ/g, "N");
+}
 
 interface SpainMapProps {
   data: CcaaMapItem[];
@@ -74,82 +72,63 @@ export function SpainMap({ data, compact = false }: SpainMapProps) {
 
   const byCode = Object.fromEntries(data.map((d) => [d.code, d]));
 
-  const handleClick = useCallback(
-    (geoName: string) => {
-      const code = NAME_TO_CODE[geoName];
-      if (!code) return;
-      const item = byCode[code];
-      if (!item) return;
-      router.push(`/ayudas/${item.slug}`);
-    },
-    [byCode, router]
-  );
-
-  const handleMouseEnter = useCallback(
-    (geoName: string, evt: React.MouseEvent) => {
-      const code = NAME_TO_CODE[geoName];
-      if (!code) return;
-      const item = byCode[code];
-      if (!item) return;
-      setTooltip({ item, x: evt.clientX, y: evt.clientY });
+  const getItem = useCallback(
+    (rawName: string): CcaaMapItem | undefined => {
+      const normalized = normalizeName(rawName);
+      const code = NAME_TO_CODE[normalized] ?? NAME_TO_CODE[rawName];
+      return code ? byCode[code] : undefined;
     },
     [byCode]
   );
 
-  const handleMouseMove = useCallback((evt: React.MouseEvent) => {
-    setTooltip((prev) => (prev ? { ...prev, x: evt.clientX, y: evt.clientY } : null));
-  }, []);
+  const handleClick = useCallback(
+    (rawName: string) => {
+      const item = getItem(rawName);
+      if (item) router.push(`/ayudas/${item.slug}`);
+    },
+    [getItem, router]
+  );
 
   return (
     <div
       className="relative w-full"
       onMouseLeave={() => setTooltip(null)}
-      onMouseMove={handleMouseMove}
+      onMouseMove={(e) =>
+        setTooltip((prev) => (prev ? { ...prev, x: e.clientX, y: e.clientY } : null))
+      }
     >
       <ComposableMap
-        projection="geoAzimuthalEqualArea"
-        projectionConfig={{
-          rotate: [-3.5, -40, 0],
-          scale: compact ? 1600 : 2000,
-        }}
+        projection="geoMercator"
+        projectionConfig={{ scale: compact ? 1800 : 2400, center: [-3.5, 40] }}
         width={compact ? 600 : 800}
-        height={compact ? 340 : 460}
+        height={compact ? 320 : 440}
         style={{ width: "100%", height: "auto" }}
       >
         <Geographies geography={GEO_URL}>
           {({ geographies }) =>
             geographies.map((geo) => {
-              const name: string =
-                geo.properties.NAME_1 ||
-                geo.properties.name ||
-                geo.properties.NAME ||
-                "";
-              const code = NAME_TO_CODE[name];
-              const item = code ? byCode[code] : undefined;
+              const rawName: string = geo.properties.name ?? "";
+              const item = getItem(rawName);
               const colorKey: CcaaMapItem["color"] = item?.color ?? "sin-datos";
-              const fill = COLOR_MAP[colorKey];
-              const hover = HOVER_MAP[colorKey];
 
               return (
                 <Geography
                   key={geo.rsmKey}
                   geography={geo}
-                  fill={fill}
+                  fill={COLOR_MAP[colorKey]}
                   stroke="#fff"
-                  strokeWidth={0.8}
+                  strokeWidth={0.5}
                   tabIndex={0}
-                  aria-label={
-                    item
-                      ? `${item.nombre}: ${item.total} ayudas`
-                      : name
-                  }
+                  aria-label={item ? `${item.nombre}: ${item.total} ayudas` : rawName}
                   style={{
-                    default: { fill, outline: "none" },
-                    hover: { fill: hover, outline: "none", cursor: "pointer" },
-                    pressed: { fill: hover, outline: "none" },
+                    default: { fill: COLOR_MAP[colorKey], outline: "none" },
+                    hover: { fill: HOVER_MAP[colorKey], outline: "none", cursor: "pointer" },
+                    pressed: { fill: HOVER_MAP[colorKey], outline: "none" },
                   }}
-                  onClick={() => handleClick(name)}
-                  onMouseEnter={(evt) => handleMouseEnter(name, evt)}
+                  onClick={() => handleClick(rawName)}
+                  onMouseEnter={(e) => {
+                    if (item) setTooltip({ item, x: e.clientX, y: e.clientY });
+                  }}
                 />
               );
             })
