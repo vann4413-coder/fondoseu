@@ -13,6 +13,9 @@ export const metadata: Metadata = {
     description:
       "Descubre subvenciones, préstamos y ayudas públicas de Europa y España para autónomos, PYMEs y startups.",
   },
+  verification: {
+    google: "LuTyXSGN0qs6j9A5EbXoDSkOTuqipfSr2OMmlTgBGiM",
+  },
 };
 
 export default function RootLayout({
