@@ -1,14 +1,10 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import {
-  ComposableMap,
-  Geographies,
-  Geography,
-} from "react-simple-maps";
+import { ComposableMap, Geographies, Geography } from "react-simple-maps";
 import { useRouter } from "next/navigation";
 import { MapTooltip } from "./map-tooltip";
-import type { CcaaMapItem } from "@/app/api/map-data/route";
+import type { CcaaMapItem } from "@/lib/map-data";
 
 const GEO_URL = "/data/spain-ccaa.geojson";
 
@@ -26,7 +22,6 @@ const HOVER_MAP: Record<CcaaMapItem["color"], string> = {
   "sin-datos": "#d1d5db",
 };
 
-// Map GeoJSON name values to ISO codes
 const NAME_TO_CODE: Record<string, string> = {
   "Andalucia": "ES-AN",
   "Aragon": "ES-AR",
@@ -53,8 +48,10 @@ function normalizeName(raw: string): string {
   return raw
     .normalize("NFD")
     .replace(/[̀-ͯ]/g, "")
-    .replace(/ñ/g, "n")
-    .replace(/Ñ/g, "N");
+    .replace(/[ñÑ]/g, (c) => (c === "ñ" ? "n" : "N"))
+    // handle mojibake: CataluÃ±a → Cataluna
+    .replace(/Ã±/g, "n")
+    .replace(/Ã/g, "N");
 }
 
 interface SpainMapProps {
@@ -64,11 +61,7 @@ interface SpainMapProps {
 
 export function SpainMap({ data, compact = false }: SpainMapProps) {
   const router = useRouter();
-  const [tooltip, setTooltip] = useState<{
-    item: CcaaMapItem;
-    x: number;
-    y: number;
-  } | null>(null);
+  const [tooltip, setTooltip] = useState<{ item: CcaaMapItem; x: number; y: number } | null>(null);
 
   const byCode = Object.fromEntries(data.map((d) => [d.code, d]));
 
@@ -79,14 +72,6 @@ export function SpainMap({ data, compact = false }: SpainMapProps) {
       return code ? byCode[code] : undefined;
     },
     [byCode]
-  );
-
-  const handleClick = useCallback(
-    (rawName: string) => {
-      const item = getItem(rawName);
-      if (item) router.push(`/ayudas/${item.slug}`);
-    },
-    [getItem, router]
   );
 
   return (
@@ -125,9 +110,13 @@ export function SpainMap({ data, compact = false }: SpainMapProps) {
                     hover: { fill: HOVER_MAP[colorKey], outline: "none", cursor: "pointer" },
                     pressed: { fill: HOVER_MAP[colorKey], outline: "none" },
                   }}
-                  onClick={() => handleClick(rawName)}
+                  onClick={() => {
+                    const i = getItem(rawName);
+                    if (i) router.push(`/ayudas/${i.slug}`);
+                  }}
                   onMouseEnter={(e) => {
-                    if (item) setTooltip({ item, x: e.clientX, y: e.clientY });
+                    const i = getItem(rawName);
+                    if (i) setTooltip({ item: i, x: e.clientX, y: e.clientY });
                   }}
                 />
               );
@@ -136,9 +125,7 @@ export function SpainMap({ data, compact = false }: SpainMapProps) {
         </Geographies>
       </ComposableMap>
 
-      {tooltip && (
-        <MapTooltip item={tooltip.item} x={tooltip.x} y={tooltip.y} />
-      )}
+      {tooltip && <MapTooltip item={tooltip.item} x={tooltip.x} y={tooltip.y} />}
     </div>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import type { CcaaMapItem } from "@/app/api/map-data/route";
+import type { CcaaMapItem } from "@/lib/map-data";
 
 const DOT: Record<CcaaMapItem["color"], string> = {
   urgente: "bg-red-600",

@@ -1,6 +1,6 @@
 "use client";
 
-import type { CcaaMapItem } from "@/app/api/map-data/route";
+import type { CcaaMapItem } from "@/lib/map-data";
 
 interface MapTooltipProps {
   item: CcaaMapItem;

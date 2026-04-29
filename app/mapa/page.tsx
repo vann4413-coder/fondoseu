@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { MapClient } from "./map-client";
 import { TopClosings } from "@/components/map/top-closings";
-import type { CcaaMapItem } from "@/app/api/map-data/route";
+import { getMapData } from "@/lib/map-data";
 
 export const dynamic = "force-dynamic";
 
@@ -15,19 +15,6 @@ export const metadata: Metadata = {
       "Visualiza ayudas, subvenciones y financiación pública por comunidad autónoma en España.",
   },
 };
-
-async function getMapData(): Promise<CcaaMapItem[]> {
-  try {
-    const baseUrl =
-      process.env.NEXT_PUBLIC_BASE_URL ??
-      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
-    const res = await fetch(`${baseUrl}/api/map-data`, { cache: "no-store" });
-    if (!res.ok) return [];
-    return res.json();
-  } catch {
-    return [];
-  }
-}
 
 export default async function MapaPage() {
   const data = await getMapData();
