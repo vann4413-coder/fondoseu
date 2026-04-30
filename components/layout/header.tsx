@@ -1,12 +1,11 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Search, Calendar, Globe, Info, Sparkles, Mail, Map, MapPin } from "lucide-react";
+import { Search, Calendar, Globe, Info, Sparkles, Mail, MapPin } from "lucide-react";
 
 const navLinks = [
   { href: "/buscar", label: "Buscar ayudas", icon: Search },
   { href: "/wizard", label: "Test rápido", icon: Sparkles },
   { href: "/calendario", label: "Calendario", icon: Calendar },
-  { href: "/mapa", label: "Mapa", icon: Map },
   { href: "/puntos", label: "Puntos PAE", icon: MapPin },
   { href: "/fondos-europeos", label: "Fondos europeos", icon: Globe },
   { href: "/sobre", label: "Sobre nosotros", icon: Info },

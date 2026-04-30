@@ -16,6 +16,7 @@ interface SearchParams {
   estado?: string;
   ue?: string;
   scope?: string | string[];
+  ccaa?: string | string[];
   pagina?: string;
 }
 
@@ -30,6 +31,11 @@ async function getFunds(params: SearchParams) {
       ? params.scope
       : [params.scope]
     : [];
+  const ccaas = params.ccaa
+    ? Array.isArray(params.ccaa)
+      ? params.ccaa
+      : [params.ccaa]
+    : [];
 
   const conditions = [];
 
@@ -40,6 +46,9 @@ async function getFunds(params: SearchParams) {
   if (q) conditions.push(or(ilike(funds.title, `%${q}%`), ilike(funds.organism, `%${q}%`)));
   if (scopes.length > 0) {
     conditions.push(inArray(funds.scope, scopes as any[]));
+  }
+  if (ccaas.length > 0) {
+    conditions.push(inArray(funds.ccaaCode, ccaas));
   }
 
   const where = conditions.length > 0 ? and(...conditions) : undefined;

@@ -1,6 +1,6 @@
 "use client";
+import { useCallback, useState } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -16,6 +16,7 @@ import {
   SECTORS,
 } from "@/lib/taxonomies";
 import { EU_PROGRAMS, type EUProgramCode } from "@/lib/eu-programs";
+import { CCAA_LIST } from "@/lib/ccaa-data";
 
 const EU_PROGRAM_OPTIONS = (
   Object.keys(EU_PROGRAMS) as EUProgramCode[]
@@ -67,6 +68,7 @@ export function FundFilters() {
   const activePrograms = searchParams.getAll("programa");
   const activeStages = searchParams.getAll("etapa");
   const activeSectors = searchParams.getAll("sector");
+  const activeCcaas = searchParams.getAll("ccaa");
   const statusFilter = searchParams.get("estado") ?? "abierta";
 
   const activeCount = [
@@ -77,6 +79,7 @@ export function FundFilters() {
     activePrograms.length > 0,
     activeStages.length > 0,
     activeSectors.length > 0,
+    activeCcaas.length > 0,
     statusFilter !== "abierta",
   ].filter(Boolean).length;
 
@@ -235,7 +238,55 @@ export function FundFilters() {
           />
         ))}
       </FilterSection>
+
+      <Separator />
+
+      {/* Comunidad autónoma */}
+      <CcaaFilter activeCcaas={activeCcaas} toggleValue={toggleValue} />
     </aside>
+  );
+}
+
+function CcaaFilter({
+  activeCcaas,
+  toggleValue,
+}: {
+  activeCcaas: string[];
+  toggleValue: (key: string, value: string) => void;
+}) {
+  const [open, setOpen] = useState(activeCcaas.length > 0);
+
+  return (
+    <div className="space-y-2">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="flex items-center justify-between w-full text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors"
+      >
+        <span>
+          Comunidad autónoma
+          {activeCcaas.length > 0 && (
+            <span className="ml-1.5 text-primary normal-case font-normal">
+              ({activeCcaas.length})
+            </span>
+          )}
+        </span>
+        <span className="text-muted-foreground">{open ? "▲" : "▼"}</span>
+      </button>
+      {open && (
+        <div className="space-y-1.5 max-h-56 overflow-y-auto pr-1">
+          {CCAA_LIST.filter((c) => c.code !== "MULTIPLE").map(({ code, nombre }) => (
+            <FilterItem
+              key={code}
+              id={`ccaa-${code}`}
+              label={nombre}
+              checked={activeCcaas.includes(code)}
+              onChange={() => toggleValue("ccaa", code)}
+            />
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 
