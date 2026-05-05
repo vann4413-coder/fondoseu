@@ -42,7 +42,7 @@ async function main() {
 
   console.log("Testing URL params to load individual PAEs:\n");
   for (const params of tests) {
-    const result = await fetchPAE(params as Record<string, string>);
+    const result = await fetchPAE(params as any);
     console.log(`  ${JSON.stringify(params)} → ${result}`);
     await new Promise(r => setTimeout(r, 600));
   }
