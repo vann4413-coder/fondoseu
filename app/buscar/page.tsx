@@ -48,7 +48,7 @@ async function getFunds(params: SearchParams) {
     conditions.push(inArray(funds.scope, scopes as any[]));
   }
   if (ccaas.length > 0) {
-    conditions.push(inArray(funds.ccaaCode, ccaas));
+    conditions.push(inArray(funds.ccaaCode, ccaas as any[]));
   }
 
   const where = conditions.length > 0 ? and(...conditions) : undefined;
