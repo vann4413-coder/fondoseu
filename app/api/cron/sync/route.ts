@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 /**
  * Cron endpoint para sincronizar datos
  * Se ejecuta automaticamente en Vercel o puede invocarse manualmente
