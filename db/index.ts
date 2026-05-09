@@ -2,16 +2,27 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as schema from "./schema";
 
-const url = process.env.DATABASE_URL;
-if (!url) throw new Error("DATABASE_URL no está definida");
+function createDb() {
+  const url = process.env.DATABASE_URL;
+  if (!url) throw new Error("DATABASE_URL no está definida");
+  const client = postgres(url, {
+    max: 1,
+    ssl: url.includes("neon.tech") ? "require" : false,
+    connect_timeout: 10,
+    idle_timeout: 20,
+  });
+  return drizzle(client, { schema });
+}
 
-const client = postgres(url, {
-  max: 1,
-  ssl: url.includes("neon.tech") ? "require" : false,
-  connect_timeout: 10,
-  idle_timeout: 20,
+type Db = ReturnType<typeof createDb>;
+let _db: Db | null = null;
+
+export const db = new Proxy({} as Db, {
+  get(_, prop) {
+    if (!_db) _db = createDb();
+    return (_db as any)[prop];
+  },
 });
 
-export const db = drizzle(client, { schema });
 export { schema };
 export { funds } from "./schema";
