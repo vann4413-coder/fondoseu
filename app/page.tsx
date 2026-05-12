@@ -130,13 +130,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Testimonials placeholder */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl font-bold mb-8 text-center">Testimonios</h2>
-        <p className="text-center text-gray-500 text-sm">
-          Los testimonios de emprendedores que han encontrado financiación irán aquí (próximamente).
-        </p>
-      </section>
     </div>
   );
 }
