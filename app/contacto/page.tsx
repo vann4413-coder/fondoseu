@@ -125,8 +125,8 @@ export default function ContactoPage() {
 
           <p className="text-xs text-center text-muted-foreground">
             También puedes escribirnos directamente a{" "}
-            <a href="mailto:hola@fondoseu.es" className="text-primary hover:underline">
-              hola@fondoseu.es
+            <a href="mailto:hola@fondoseu.org" className="text-primary hover:underline">
+              hola@fondoseu.org
             </a>
           </p>
         </form>
