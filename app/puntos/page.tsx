@@ -89,7 +89,7 @@ export default function PuntosPage() {
           <Button asChild variant="secondary">
             <Link href="/buscar">Ver todas las ayudas</Link>
           </Button>
-          <Button asChild variant="outline" className="border-primary-foreground/40 text-primary-foreground hover:bg-primary-foreground/10">
+          <Button asChild variant="outline" className="border-white text-white hover:bg-white/10">
             <Link href="/wizard">Hacer el test</Link>
           </Button>
         </div>
