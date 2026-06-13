@@ -1,4 +1,10 @@
 export const dynamic = "force-dynamic";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Buscar ayudas",
+  robots: { index: false, follow: false },
+};
 
 import { Suspense } from "react";
 import { db } from "@/db";
