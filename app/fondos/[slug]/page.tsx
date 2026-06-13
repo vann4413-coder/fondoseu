@@ -428,6 +428,19 @@ export default async function FondoPage({
               </CardContent>
             </Card>
 
+            {/* CTA consultoría */}
+            <Card className="border-amber-200 bg-amber-50">
+              <CardContent className="pt-6 pb-5">
+                <p className="font-semibold text-amber-900 mb-1">¿Necesitas ayuda para solicitarlo?</p>
+                <p className="text-sm text-amber-800/80 mb-4 leading-relaxed">
+                  Te ayudamos a preparar la solicitud y maximizar tus posibilidades de éxito.
+                </p>
+                <Button asChild variant="outline" className="w-full border-amber-400 text-amber-900 hover:bg-amber-100">
+                  <Link href="/contacto">Hablar con un experto</Link>
+                </Button>
+              </CardContent>
+            </Card>
+
             {/* CTA wizard */}
             <Card className="bg-primary text-primary-foreground">
               <CardContent className="pt-6 pb-5">
